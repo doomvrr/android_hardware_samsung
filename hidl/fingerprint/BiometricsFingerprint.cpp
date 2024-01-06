@@ -147,6 +147,8 @@ Return<bool> BiometricsFingerprint::isUdfps(uint32_t) {
 Return<void> BiometricsFingerprint::onFingerDown(uint32_t, uint32_t, float, float) {
 #ifdef REQUEST_TOUCH_EVENT
     request(SEM_REQUEST_TOUCH_EVENT, 2);
+#endif
+#ifdef REQUEST_HBM_EVENT
     set("/sys/class/lcd/panel/fp_green_circle", 1);
     set("/sys/class/lcd/panel/hbm_override", 1);
 #endif
@@ -155,9 +157,11 @@ Return<void> BiometricsFingerprint::onFingerDown(uint32_t, uint32_t, float, floa
 
 Return<void> BiometricsFingerprint::onFingerUp() {
 #ifdef REQUEST_TOUCH_EVENT
+    request(SEM_REQUEST_TOUCH_EVENT, 1);
+#endif
+#ifdef REQUEST_HBM_EVENT
     set("/sys/class/lcd/panel/fp_green_circle", 0);
     set("/sys/class/lcd/panel/hbm_override", 0);
-    request(SEM_REQUEST_TOUCH_EVENT, 1);
 #endif
     return Void();
 }
@@ -280,7 +284,7 @@ Return<RequestStatus> BiometricsFingerprint::enroll(const hidl_array<uint8_t, 69
 }
 
 Return<RequestStatus> BiometricsFingerprint::postEnroll() {
-#ifdef REQUEST_TOUCH_EVENT
+#ifdef REQUEST_HBM_EVENT
     set("/sys/class/lcd/panel/fp_green_circle", 0);
     set("/sys/class/lcd/panel/hbm_override", 0);
 #endif
@@ -303,7 +307,7 @@ Return<RequestStatus> BiometricsFingerprint::cancel() {
     }
 #endif
 
-#ifdef REQUEST_TOUCH_EVENT
+#ifdef REQUEST_HBM_EVENT
     set("/sys/class/lcd/panel/fp_green_circle", 0);
     set("/sys/class/lcd/panel/hbm_override", 0);
 #endif
